@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#710b10">
+<meta name="description" content="MOODS — Mobile Training">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./favicon.png">
+<title>MOODS — Mobile Training</title>
+<style>
+:root{
+  --wine:#65080d;--red:#8d1118;--red2:#a71920;--gold:#dec49a;
+  --cream:#f4e8d4;--muted:#cdb99c;--line:rgba(222,196,154,.45);
+  --ink:#3f080b;--blue:#4389c9;--orange:#f39a1c;--silver:#aeb9c2;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#250305;color:var(--cream);font-family:Arial,Helvetica,sans-serif}
+body{overflow:hidden}
+button{font:inherit}
+.app{height:100dvh;min-height:100%;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 42%,#a71920 0%,#7a0b10 58%,#4b0509 100%);padding-top:var(--safe-top);padding-bottom:var(--safe-bottom)}
+.topbar{height:48px;flex:0 0 48px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:rgba(67,3,7,.48);letter-spacing:.16em;text-transform:uppercase;font-size:12px;font-weight:800}
+.brand span{font-weight:400;color:var(--gold)}
+.counter{font-variant-numeric:tabular-nums;color:var(--gold);white-space:nowrap}
+.stage{position:relative;flex:1;min-height:0;overflow:hidden}
+.page{position:absolute;inset:0;display:none;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#c9a979 transparent;padding:clamp(12px,3vw,22px);padding-bottom:18px}
+.page.active{display:flex;flex-direction:column;gap:12px}
+.nav{height:72px;flex:0 0 72px;display:flex;align-items:center;justify-content:center;gap:clamp(12px,4vw,28px);padding:5px 14px;background:rgba(53,2,5,.68);border-top:1px solid var(--line)}
+.navbtn{height:48px;min-width:54px;padding:0 13px;border:1px solid #c5a477;border-radius:12px;background:rgba(255,255,255,.035);color:var(--gold);font-size:28px;line-height:1;cursor:pointer}
+.navbtn:disabled{opacity:.25;cursor:default}
+.navbtn span{font-size:10px;letter-spacing:.08em;vertical-align:middle}
+.dots{display:flex;align-items:center;justify-content:center;gap:7px}
+.dot{width:8px;height:8px;border:0;border-radius:50%;background:#a56c65;padding:0;cursor:pointer}
+.dot.active{width:11px;height:11px;background:var(--gold);box-shadow:0 0 0 3px #dec49a30}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.section-title{font-family:Georgia,serif;font-weight:400;color:var(--gold);font-size:clamp(25px,6vw,38px);line-height:1.05;margin:0}
+.subline{font-size:14px;color:#f8ead6;line-height:1.4}
+.rule{height:2px;background:var(--accent,var(--gold));opacity:.9}
+
+/* 01 — cover */
+.welcome{justify-content:center;align-items:center;text-align:center;gap:0!important;background:radial-gradient(ellipse at 50% 48%,#b21c23 0%,#8d1018 42%,#60070c 100%)}
+.welcome-script{font-family:Georgia,serif;font-style:italic;font-size:clamp(30px,8vw,50px);color:white;margin-bottom:6px}
+.welcome-logo{font-family:Georgia,serif;font-size:clamp(68px,18vw,112px);line-height:.95;letter-spacing:.04em;color:var(--gold);text-shadow:2px 3px 0 #260508}
+.welcome-sub{font-size:clamp(12px,3.3vw,19px);letter-spacing:.19em;color:var(--gold);margin-top:7px}
+.welcome-training{font-size:clamp(16px,4vw,22px);font-weight:900;letter-spacing:.08em;color:white;margin-top:clamp(65px,16vh,125px)}
+.welcome-down{font-size:36px;color:white;margin-top:35px;font-weight:200}
+
+/* 02 — range */
+.discover{gap:14px!important}
+.discover-heading{text-align:center;padding:4px 0 2px}
+.discover-heading h1{font-size:clamp(25px,6.8vw,36px);line-height:1.06;margin:0;color:var(--gold);font-weight:900}
+.discover-heading p{margin:8px 0 0;font-family:Georgia,serif;font-style:italic;font-size:17px}
+.range-groups{display:grid;gap:12px}
+.range-group{border:1px solid var(--line);border-radius:14px;padding:10px;background:rgba(65,3,7,.34)}
+.range-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900;letter-spacing:.11em;margin-bottom:8px;color:var(--group)}
+.range-label:after{content:"";height:2px;background:var(--group);flex:1;opacity:.75}
+.range-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.range-item{display:flex;align-items:center;gap:8px;min-width:0;border-radius:10px;background:rgba(255,255,255,.055);padding:7px}
+.range-item img{width:64px;height:90px;object-fit:contain;flex:0 0 64px}
+.range-copy{min-width:0}
+.range-name{font-size:12px;line-height:1.15;font-weight:900;color:#fff}
+.range-desc{font-size:11px;line-height:1.25;color:#ead8bd;margin-top:4px}
+.new-tag{display:inline-block;margin-top:5px;padding:3px 6px;background:var(--blue);color:white;border-radius:4px;font-size:9px;font-weight:900;letter-spacing:.08em}
+.discover-foot{text-align:center;color:var(--gold);font-size:11px;letter-spacing:.13em;line-height:1.4;padding:2px}
+
+/* Product pages */
+.product-page{gap:9px!important}
+.hero-image{width:100%;height:clamp(150px,25svh,235px);object-fit:cover;object-position:center;border-radius:12px;border:1px solid #ffffff20;display:block;background:#4a070b}
+.product-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 2px 0}
+.product-name{font-size:clamp(23px,6.4vw,34px);font-weight:900;line-height:1.02;color:var(--accent);letter-spacing:.01em}
+.product-brand{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:800;text-align:right;white-space:nowrap}
+.product-line{height:2px;background:var(--accent);opacity:.9}
+.product-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.product-profile{font-size:12px;letter-spacing:.12em;font-weight:900;color:var(--cream);text-transform:uppercase}
+.intensity{font-size:11px;letter-spacing:.08em;color:var(--gold);text-align:right}
+.product-visual{height:clamp(230px,34svh,320px);display:flex;align-items:center;justify-content:center;min-height:0;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(55,0,4,.12));border-radius:12px;overflow:hidden}
+.product-visual img{height:100%;max-width:100%;width:auto;object-fit:contain;display:block}
+.features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.feature{min-height:78px;display:flex;gap:8px;align-items:flex-start;padding:10px 9px;border:1px solid var(--line);border-radius:10px;background:rgba(60,2,6,.3)}
+.feature-icon{flex:0 0 22px;color:var(--accent);font-size:20px;line-height:1}
+.feature-text{font-size:clamp(11px,2.9vw,13px);line-height:1.3;font-weight:700;letter-spacing:.045em;text-transform:uppercase;color:#f7ead8}
+.product-footer{text-align:center;font-size:10px;letter-spacing:.15em;color:var(--gold);padding:4px 0 2px}
+.fusion-ribbon{display:inline-block;background:var(--blue);color:white;padding:6px 10px;border-radius:4px;font-size:10px;font-weight:900;letter-spacing:.12em}
+
+/* 10 — taste finder */
+.guide{gap:12px!important}
+.guide-title{text-align:center}
+.guide-title h1{margin:0;color:var(--gold);font-size:clamp(25px,6.7vw,36px);line-height:1.08;font-weight:900}
+.guide-title p{margin:7px 0 0;font-family:Georgia,serif;font-size:16px;font-style:italic;color:white}
+.guide-group{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(60,2,6,.32)}
+.guide-group-head{padding:8px 11px;background:var(--group);color:#3c080a;font-weight:900;font-size:13px;letter-spacing:.1em}
+.guide-question{padding:7px 10px;color:#f5e7d4;font-size:12px;line-height:1.35;border-bottom:1px solid var(--line)}
+.guide-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:8px}
+.guide-product{display:flex;align-items:center;gap:7px;min-width:0}
+.guide-product img{width:58px;height:80px;object-fit:contain;flex:0 0 58px}
+.guide-product strong{display:block;font-size:11px;line-height:1.2;color:white}
+.guide-product span{display:block;margin-top:3px;font-size:10px;line-height:1.2;color:#ead8bd}
+.guide-note{font-size:11px;line-height:1.4;text-align:center;color:var(--gold);padding:2px 6px}
+
+@media(min-width:700px){
+ .page{max-width:560px;left:50%;right:auto;transform:translateX(-50%);width:min(100%,560px);border-left:1px solid #ffffff18;border-right:1px solid #ffffff18}
+ .page.active{transform:translateX(-50%)}
+ .topbar,.nav{padding-left:max(18px,calc((100vw - 560px)/2));padding-right:max(18px,calc((100vw - 560px)/2))}
+ .product-visual{height:310px}
+}
+@media(max-height:720px){
+ .topbar{height:42px;flex-basis:42px}
+ .nav{height:62px;flex-basis:62px}
+ .page{padding-top:10px;gap:8px}
+ .hero-image{height:clamp(125px,22svh,175px)}
+ .product-visual{height:clamp(190px,29svh,240px)}
+ .feature{min-height:65px;padding:7px}
+}
+@media(max-width:360px){
+ .range-item{padding:5px;gap:5px}
+ .range-item img{width:54px;flex-basis:54px}
+ .range-name{font-size:11px}
+ .feature{padding:7px 6px;gap:5px}
+ .feature-text{font-size:10px}
+ .guide-product img{width:50px;flex-basis:50px}
+}
+button:focus-visible{outline:2px solid white;outline-offset:3px}
+
+
+/* Téléchargement local de la version complète */
+.offline-download{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-top:clamp(28px,7vh,54px);padding:12px 16px;
+  border:1px solid var(--gold);border-radius:10px;
+  color:var(--gold);background:rgba(45,2,5,.28);
+  text-decoration:none;font-size:10px;font-weight:900;
+  letter-spacing:.11em;line-height:1.35;text-align:center;
+  max-width:min(92%,330px)
+}
+.offline-download:active{background:rgba(222,196,154,.16)}
+/* CORRECTION PAGE 10 — empêcher la compression des catégories */
+.guide > *{flex:0 0 auto}
+.guide .guide-group{flex-shrink:0}
+.guide .guide-products{align-content:start}
+.guide .guide-product{min-height:86px}
+.guide .guide-product img{height:86px;width:62px;flex-basis:62px}
+.guide .guide-group:last-of-type .guide-product:last-child{grid-column:1 / -1;max-width:100%}
+.guide .guide-note{padding-top:5px;padding-bottom:8px}
+@media(max-width:360px){
+ .guide .guide-product img{height:78px;width:54px;flex-basis:54px}
+ .guide .guide-product{min-height:78px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar"><div class="brand">MOODS <span>/ MOBILE TRAINING</span></div><div class="counter" id="counter">01 / 10</div></header>
+<main class="stage" id="stage" aria-live="polite">
+<section class="page active welcome" data-title="Startseite">
+  <div class="welcome-script">Willkommen bei</div>
+  <div class="welcome-logo">MOODS</div>
+  <div class="welcome-sub">AROMATIC CIGARILLOS</div>
+  <div class="welcome-training">MOBILE TRAINING</div>
+  <div class="welcome-down">⌄</div>
+  <a class="offline-download" href="./MOODS-version-hors-ligne.zip" download="MOODS-version-hors-ligne.zip">↓ OFFLINE-VERSION HERUNTERLADEN</a>
+</section>
+
+<section class="page discover" data-title="Entdecke deinen Geschmack">
+ <div class="discover-heading">
+  <div class="eyebrow">MOODS · DIE PRODUKTPALETTE</div>
+  <h1>ENTDECKE DEINEN<br>GESCHMACK</h1>
+  <p>Sieben Produkte, drei Profile</p>
+ </div>
+ <div class="range-groups">
+  <div class="range-group" style="--group:#b51b22">
+   <div class="range-label">VOLLMUNDIG</div>
+   <div class="range-items">
+    <div class="range-item"><img src="pack-sans-filtre.jpg" alt="MOODS Sans filtre"><div class="range-copy"><div class="range-name">OHNE FILTER</div><div class="range-desc">Kräftiger Geschmack<br>Ohne Filter</div></div></div>
+    <div class="range-item"><img src="pack-filter.jpg" alt="MOODS Filter"><div class="range-copy"><div class="range-name">FILTER</div><div class="range-desc">Kräftiger Geschmack<br>Mit Filter</div></div></div>
+   </div>
+  </div>
+  <div class="range-group" style="--group:#dec49a">
+   <div class="range-label">AUSGEWOGEN</div>
+   <div class="range-items">
+    <div class="range-item"><img src="pack-gold.jpg" alt="MOODS Gold Filter"><div class="range-copy"><div class="range-name">GOLD FILTER</div><div class="range-desc">Ausgewogener Geschmack<br>Längeres Format</div></div></div>
+    <div class="range-item"><img src="pack-double.jpg" alt="Mini MOODS Double Filter"><div class="range-copy"><div class="range-name">DOUBLE FILTER</div><div class="range-desc">Feiner Geschmack<br>Mini-Format</div></div></div>
+   </div>
+  </div>
+  <div class="range-group" style="--group:#aeb9c2">
+   <div class="range-label">FEIN</div>
+   <div class="range-items">
+    <div class="range-item"><img src="pack-silver.jpg" alt="MOODS Silver Filter"><div class="range-copy"><div class="range-name">SILVER FILTER</div><div class="range-desc">Feiner Geschmack<br>Ohne süsse Note</div></div></div>
+    <div class="range-item"><img src="pack-sweet.jpg" alt="MOODS Sweet Filter"><div class="range-copy"><div class="range-name">SWEET FILTER</div><div class="range-desc">Mild<br>Süsse Note</div></div></div>
+    <div class="range-item"><img src="pack-fusion.jpg" alt="MOODS Fusion Filter"><div class="range-copy"><div class="range-name">FUSION FILTER</div><div class="range-desc">Süsslich-herzhaft<br>Natürlicher Papierfilter<span class="new-tag">NEU 2026</span></div></div></div>
+   </div>
+  </div>
+ </div>
+ <div class="discover-foot">MOODS · 7 PRODUKTE · PRODUKTPALETTE</div>
+</section>
+
+<section class="page product-page" data-title="Ohne Filter" style="--accent:#f1e3cb">
+ <img class="hero-image" src="hero-sans-filtre.jpg" alt="Kräftiger Geschmack">
+ <div class="product-head"><div class="product-name">OHNE FILTER</div><div class="product-brand">MOODS</div></div><div class="product-line"></div>
+ <div class="product-meta"><div class="product-profile">Kräftiger Geschmack</div><div class="intensity">KRÄFTIG · ◆ ◆ ◆ ◆ ◇</div></div>
+ <div class="product-visual"><img src="pack-sans-filtre.jpg" alt="Paquet MOODS Sans filtre"></div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">◒</div><div class="feature-text">Feines Java-Deckblatt für ein unverwechselbares Aroma</div></div>
+  <div class="feature"><div class="feature-icon">⁙</div><div class="feature-text">Aromatische MOODS-Tabakmischung</div></div>
+  <div class="feature"><div class="feature-icon">◯</div><div class="feature-text">Ohne Filter</div></div>
+  <div class="feature"><div class="feature-icon">↔</div><div class="feature-text">Klassisches Cigarillo-Format für längere Genussmomente</div></div>
+ </div><div class="product-footer">MOODS · KRÄFTIGER GESCHMACK</div>
+</section>
+
+<section class="page product-page" data-title="Filter" style="--accent:#f1e3cb">
+ <img class="hero-image" src="hero-filter.jpg" alt="Kräftiger Geschmack">
+ <div class="product-head"><div class="product-name">FILTER</div><div class="product-brand">MOODS</div></div><div class="product-line"></div>
+ <div class="product-meta"><div class="product-profile">Kräftiger Geschmack · mit Filter</div><div class="intensity">KRÄFTIG · ◆ ◆ ◆ ◆ ◇</div></div>
+ <div class="product-visual"><img src="pack-filter.jpg" alt="Paquet MOODS Filter"></div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">◒</div><div class="feature-text">Feines Java-Deckblatt für ein unverwechselbares Aroma</div></div>
+  <div class="feature"><div class="feature-icon">⁙</div><div class="feature-text">Aromatische MOODS-Tabakmischung</div></div>
+  <div class="feature"><div class="feature-icon">◯</div><div class="feature-text">Aktivkohlefilter für ein feineres Raucherlebnis</div></div>
+  <div class="feature"><div class="feature-icon">↔</div><div class="feature-text">Klassisches Cigarillo-Format für längere Genussmomente</div></div>
+ </div><div class="product-footer">MOODS · KRÄFTIGER GESCHMACK</div>
+</section>
+
+<section class="page product-page" data-title="Gold Filter" style="--accent:#dec49a">
+ <img class="hero-image" src="hero-gold.jpg" alt="Ausgewogener Geschmack">
+ <div class="product-head"><div class="product-name">GOLD FILTER</div><div class="product-brand">MOODS</div></div><div class="product-line"></div>
+ <div class="product-meta"><div class="product-profile">Ausgewogener Geschmack</div><div class="intensity">AUSGEWOGEN · ◆ ◆ ◆ ◇ ◇</div></div>
+ <div class="product-visual"><img src="pack-gold.jpg" alt="Paquet MOODS Gold Filter"></div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">◒</div><div class="feature-text">Terra-Dannemann-Deckblatt für ein sanfteres Aroma</div></div>
+  <div class="feature"><div class="feature-icon">⁙</div><div class="feature-text">Aromatische MOODS-Tabakmischung</div></div>
+  <div class="feature"><div class="feature-icon">◯</div><div class="feature-text">Aktivkohlefilter für ein feineres Raucherlebnis</div></div>
+  <div class="feature"><div class="feature-icon">↔</div><div class="feature-text">Klassisches Cigarillo-Format für längere Genussmomente</div></div>
+ </div><div class="product-footer">MOODS · AUSGEWOGENER GESCHMACK</div>
+</section>
+
+<section class="page product-page" data-title="Double Filter" style="--accent:#dec49a">
+ <img class="hero-image" src="hero-double.jpg" alt="Feines Aroma und Mini-Format">
+ <div class="product-head"><div class="product-name">DOUBLE FILTER</div><div class="product-brand">MINI MOODS</div></div><div class="product-line"></div>
+ <div class="product-meta"><div class="product-profile">Feiner Geschmack · Mini-Format</div><div class="intensity">AUSGEWOGEN · ◆ ◆ ◆ ◇ ◇</div></div>
+ <div class="product-visual"><img src="pack-double.jpg" alt="Paquet Mini MOODS Double Filter"></div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">◒</div><div class="feature-text">Terra-Dannemann-Deckblatt für ein sanfteres Aroma</div></div>
+  <div class="feature"><div class="feature-icon">⁙</div><div class="feature-text">Aromatische MOODS-Tabakmischung</div></div>
+  <div class="feature"><div class="feature-icon">◉</div><div class="feature-text">Doppel-Aktivkohlefilter für ein feineres Raucherlebnis</div></div>
+  <div class="feature"><div class="feature-icon">↔</div><div class="feature-text">Ein kleines, kompaktes Cigarillo für kürzere Genussmomente</div></div>
+ </div><div class="product-footer">MOODS · MINI-FORMAT</div>
+</section>
+
+<section class="page product-page" data-title="Silver Filter" style="--accent:#aeb9c2">
+ <img class="hero-image" src="hero-silver.jpg" alt="Feiner Geschmack">
+ <div class="product-head"><div class="product-name">SILVER FILTER</div><div class="product-brand">MOODS</div></div><div class="product-line"></div>
+ <div class="product-meta"><div class="product-profile">Feiner Geschmack</div><div class="intensity">FEIN · ◆ ◆ ◇ ◇ ◇</div></div>
+ <div class="product-visual"><img src="pack-silver.jpg" alt="Paquet MOODS Silver Filter"></div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">◒</div><div class="feature-text">Terra-Dannemann-Deckblatt für ein sanfteres Aroma</div></div>
+  <div class="feature"><div class="feature-icon">⁙</div><div class="feature-text">Feine MOODS-Tabakmischung</div></div>
+  <div class="feature"><div class="feature-icon">◯</div><div class="feature-text">Aktivkohlefilter für ein feineres Raucherlebnis</div></div>
+  <div class="feature"><div class="feature-icon">↔</div><div class="feature-text">Ein kompaktes Cigarillo für kürzere Genussmomente</div></div>
+ </div><div class="product-footer">MOODS · FEINER GESCHMACK</div>
+</section>
+
+<section class="page product-page" data-title="Sweet Filter" style="--accent:#f39a1c">
+ <img class="hero-image" src="hero-sweet.jpg" alt="Milder, überraschender Geschmack">
+ <div class="product-head"><div class="product-name">SWEET FILTER</div><div class="product-brand">MOODS</div></div><div class="product-line"></div>
+ <div class="product-meta"><div class="product-profile">Milder Geschmack · süsse Note</div><div class="intensity">MILD · ◆ ◆ ◇ ◇ ◇</div></div>
+ <div class="product-visual"><img src="pack-sweet.jpg" alt="Paquet MOODS Sweet Filter"></div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">◒</div><div class="feature-text">Terra-Dannemann-Deckblatt für ein feines Aroma</div></div>
+  <div class="feature"><div class="feature-icon">⁙</div><div class="feature-text">Leicht aromatische Mischung mit Orienttabaken</div></div>
+  <div class="feature"><div class="feature-icon">♨</div><div class="feature-text">Speziell aromatisiertes Mundstück</div></div>
+  <div class="feature"><div class="feature-icon">↔</div><div class="feature-text">Ein kompaktes Cigarillo für kürzere Genussmomente</div></div>
+ </div><div class="product-footer">MOODS · MILDER GESCHMACK</div>
+</section>
+
+<section class="page product-page" data-title="Fusion Filter" style="--accent:#f39a1c">
+ <img class="hero-image" src="hero-fusion.jpg" alt="Fusion-Geschmack">
+ <div class="product-head"><div class="product-name">FUSION FILTER</div><div class="product-brand">MOODS</div></div><div class="product-line"></div>
+ <div class="product-meta"><div class="product-profile">Süsslich-herzhafter Geschmack</div><div class="fusion-ribbon">NEU 2026</div></div>
+ <div class="product-visual"><img src="pack-fusion.jpg" alt="Paquet MOODS Fusion Filter"></div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">◒</div><div class="feature-text">Terra-Dannemann-Deckblatt für ein feines Aroma</div></div>
+  <div class="feature"><div class="feature-icon">⁙</div><div class="feature-text">Leicht aromatische Mischung für einen milderen Geschmack</div></div>
+  <div class="feature"><div class="feature-icon">♨</div><div class="feature-text">Spezieller Papierfilter mit aromatisiertem Mundstück und Toffee-Salz-Note</div></div>
+  <div class="feature"><div class="feature-icon">↔</div><div class="feature-text">Ein einzigartiges, kompaktes Format für kürzere Genussmomente</div></div>
+ </div><div class="product-footer">MOODS FUSION · MIT NATÜRLICHEM PAPIERFILTER</div>
+</section>
+
+<section class="page guide" data-title="Entdecke deinen Geschmack">
+ <div class="guide-title"><h1>ENTDECKE DEINEN<br>GESCHMACK</h1><p>Welche Geschmacksintensität passt zu dir?</p></div>
+ <div class="guide-group" style="--group:#b51b22">
+  <div class="guide-group-head">VOLLMUNDIG</div>
+  <div class="guide-question">Mit Filter?</div>
+  <div class="guide-products">
+   <div class="guide-product"><img src="pack-sans-filtre.jpg" alt=""><div><strong>OHNE FILTER</strong><span>Ohne Filter</span></div></div>
+   <div class="guide-product"><img src="pack-filter.jpg" alt=""><div><strong>FILTER</strong><span>Mit Filter</span></div></div>
+  </div>
+ </div>
+ <div class="guide-group" style="--group:#dec49a">
+  <div class="guide-group-head">AUSGEWOGEN</div>
+  <div class="guide-question">Wie lange dauert dein Genussmoment?</div>
+  <div class="guide-products">
+   <div class="guide-product"><img src="pack-gold.jpg" alt=""><div><strong>GOLD FILTER</strong><span>Längeres Format</span></div></div>
+   <div class="guide-product"><img src="pack-double.jpg" alt=""><div><strong>DOUBLE FILTER</strong><span>Kürzeres Format · Mini-Format</span></div></div>
+  </div>
+ </div>
+ <div class="guide-group" style="--group:#aeb9c2">
+  <div class="guide-group-head">FEIN</div>
+  <div class="guide-question">Mit süsser Note?</div>
+  <div class="guide-products">
+   <div class="guide-product"><img src="pack-silver.jpg" alt=""><div><strong>SILVER FILTER</strong><span>Ohne süsse Note</span></div></div>
+   <div class="guide-product"><img src="pack-sweet.jpg" alt=""><div><strong>SWEET FILTER</strong><span>Süsse Note</span></div></div>
+   <div class="guide-product"><img src="pack-fusion.jpg" alt=""><div><strong>FUSION FILTER</strong><span>Süsslich-herzhaft · <b style="color:#8dc4f3">Neu 2026</b></span></div></div>
+  </div>
+ </div>
+ <div class="guide-note">MOODS · 7 PRODUKTE · FINDE DEIN PROFIL</div>
+</section>
+</main>
+<nav class="nav" aria-label="Navigation entre les pages">
+ <button class="navbtn" id="prev" aria-label="Vorherige Seite">‹</button>
+ <div class="dots" id="dots" aria-label="Folie auswählen"></div>
+ <button class="navbtn" id="next" aria-label="Nächste Seite">›</button>
+</nav>
+</div>
+<script>
+(()=> {
+ const pages=[...document.querySelectorAll('.page')], counter=document.getElementById('counter'),
+ prev=document.getElementById('prev'), next=document.getElementById('next'),
+ dots=document.getElementById('dots'), stage=document.getElementById('stage');
+ let index=0,startX=0,startY=0;
+ pages.forEach((p,i)=>{const b=document.createElement('button');b.className='dot'+(i===0?' active':'');b.setAttribute('aria-label','Zu Folie '+(i+1));b.addEventListener('click',()=>show(i));dots.appendChild(b)});
+ const dotEls=[...dots.children];
+ function show(n){
+  index=Math.max(0,Math.min(pages.length-1,n));
+  pages.forEach((p,i)=>{p.classList.toggle('active',i===index);if(i===index)p.scrollTop=0});
+  dotEls.forEach((d,i)=>{d.classList.toggle('active',i===index);d.setAttribute('aria-current',i===index?'page':'false')});
+  counter.textContent=String(index+1).padStart(2,'0')+' / '+String(pages.length).padStart(2,'0');
+  prev.disabled=index===0;next.disabled=index===pages.length-1;
+  document.title='MOODS — '+(pages[index].dataset.title||'Mobile Training');
+ }
+ prev.addEventListener('click',()=>show(index-1));next.addEventListener('click',()=>show(index+1));
+ stage.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX;startY=e.changedTouches[0].clientY},{passive:true});
+ stage.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25)show(index+(dx<0?1:-1))},{passive:true});
+ window.addEventListener('keydown',e=>{if(['ArrowRight','PageDown'].includes(e.key)){e.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(index-1)}if(e.key==='Home')show(0);if(e.key==='End')show(pages.length-1)});
+ show(0);
+ if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}
+})();
+</script>
+</body></html>
